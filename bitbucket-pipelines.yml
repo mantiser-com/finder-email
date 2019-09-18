@@ -39,4 +39,12 @@ pipelines:
           # push the new Docker image to the Docker registry
           # Login to google docker hub
           - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://gcr.io &&  docker push $IMAGE_NAME
+    - stop:
+        name: Deploy to app engine
+        image: google/cloud-sdk:latest
+        script:
+          - echo "$GCLOUD_API_MANTISER_DEPLOY_KEY" | base64 -d > ./gcloud-api-key.json
+          - gcloud auth activate-service-account --key-file gcloud-api-key.json
+          - gcloud config set project mantiser-com
+          - gcloud app  deploy -q
 
