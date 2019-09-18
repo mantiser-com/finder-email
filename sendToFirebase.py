@@ -8,18 +8,36 @@ from firebase_admin import db
 from firebase_admin import storage
 
 
-cred = credentials.Certificate('/keys/fins.json')
-
+#cred = credentials.Certificate(os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+cred = credentials.Certificate('/code/key/mantiser-com-local_dev.json')
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://fins-dff79.firebaseio.com',
+    'databaseURL': 'https://mantiser-com.firebaseio.com/',
     'storageBucket': 'fins-dff79.appspot.com'
 })
 bucket = storage.bucket()
 
+def addEmailToFirebase(email,uid,sid,url,word):
+	'''
+	Add the email to the users firebase account
+	'''
+	now = datetime.datetime.now()
+	db_ref = db.reference('/todos/'+uid+'/emails/')
+	data = {
+			'email':email,
+			'scraper':sid,
+			'url': url,
+			'words': word,
+        	'timestamp':now.isoformat()
+	}
+	result = db_ref.push(data)
+	print(result)
+
+
+
 def logToUser(message,USER_ID):
 	print(message)
 	now = datetime.datetime.now()
-	log_ref= 	ref = db.reference('/todos/'+USER_ID+'/stats/events')
+	log_ref= db.reference('/todos/'+USER_ID+'/stats/events')
 	data = {
 			'message':message,
         	'timestamp':now.isoformat()
@@ -28,15 +46,15 @@ def logToUser(message,USER_ID):
 	print(result)
 
 
-def upload_blob(botid):
-	"""Uploads a file to the bucket."""
-	bucket = storage.bucket()
-	#file is just an object from request.files e.g. file = request.files['myFile']
-	blob = bucket.blob("email/"+botid+".csv")
-	blob.upload_from_string("out/"+botid+".csv")
-	#os.remove("out/"+botid+".csv") 
-
-	print(blob.public_url)
+#def upload_blob(botid):
+#	"""Uploads a file to the bucket."""
+#	bucket = storage.bucket()
+#	#file is just an object from request.files e.g. file = request.files['myFile']
+#	blob = bucket.blob("email/"+botid+".csv")
+#	blob.upload_from_string("out/"+botid+".csv")
+#	#os.remove("out/"+botid+".csv") 
+#
+#	print(blob.public_url)
 
 
 
@@ -122,40 +140,3 @@ def doneScanFirebase(user,botid):
 
 
 
-def helmEbotDeployed(user,botid):
-	'''
-	Set ebot to deploy and log to use
-	'''
-	now = datetime.datetime.now()
-
-	#Get the running version 
-	ref = db.reference('/todos/'+user+'/ebot/'+botid)
-	result = ref.get()
-	
-	if result != None:
-		#print(result.encode('utf8'))
-		result['status'] = "Deployed"
-		result['Deployed At']=now.isoformat()
-		save_ref= 	ref = db.reference('/todos/'+user+'/ebot/'+botid)
-		result = save_ref.set(result)
-		logToUser('EMAIL_BOT ID {0} IS DEPLOYED'.format(botid),user)
-
-
-
-def helmEbotDeleted(user,botid):
-	'''
-	Set ebot to deploy and log to use
-	'''
-	now = datetime.datetime.now()
-
-	#Get the running version 
-	ref = db.reference('/todos/'+user+'/ebot/'+botid)
-	result = ref.get()
-	
-	if result != None:
-		#print(result.encode('utf8'))
-		result['status'] = "Deleted"
-		result['Deployed At']=now.isoformat()
-		save_ref= 	ref = db.reference('/todos/'+user+'/ebot/'+botid)
-		result = save_ref.set(result)
-		logToUser('EMAIL_BOT ID {0} IS DELETED'.format(botid),user)

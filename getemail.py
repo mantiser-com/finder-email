@@ -1,89 +1,45 @@
-from bs4 import BeautifulSoup
+import re
+import hashlib
 import requests
+from bs4 import BeautifulSoup
 import requests.exceptions
 from urllib.parse import urlsplit
 from collections import deque
-import re
-import hashlib
-import redis
-from addMailchimp import addToMail 
-from addMailchimp import testMailChimp
-from sendToFirebase import *
-
-r = redis.StrictRedis(host='redis', port=6379, db=0)
-
-
-weGoodToGoMailchimp=True
-
-
-def testMailchimpApi(mailchimplist,mailchimpkey):
-    if testMailChimp(mailchimpkey,mailchimplist) == False:
-        print("No access to mailchimp")
-        weGoodToGoMailchimp=False
+import json
+from sendToFirebase import addEmailToFirebase, addUrlsFirebase
 
 
 
-def writeEmailToFile(email,site,tags,user,botid,mailchimpkey,mailchimplist):
-    '''
-    Write the email to file
-    '''
-    print("Adidng email to file")
-    f = open("out/"+botid+".csv", "a")
-    f.write("{0},{1},{2} \n".format(email,site.encode('utf-8'),tags.encode('utf-8')))
-    
-    #Test if we hade a working mailchimp
-    if weGoodToGoMailchimp: 
-        addToMail(email,site,tags,mailchimplist,mailchimpkey)
-    addEmailFirebase(email,user,site,tags,botid)
-    f.close()
+#Open and load the exclude info
+with open('exclude.json') as json_file:
+    data = json.load(json_file)
 
 
-def haveSearched(url,user,words,botid):
-    '''
-    Check if we have scraped the search
-    '''
-    hash_url_d = hashlib.md5(str(botid+"-"+url).encode('utf-8'))
-    hash_url =hash_url_d.hexdigest()
-    from_cache = r.get(hash_url)
-    print(from_cache)
-    if from_cache == None:
-        #We dont haveything in the cache :-( 
-        r.set(hash_url,url)
-        addUrlsFirebase(user,url,words,botid)
-        return True
-    else:
-        print("Alreadyd scanned")
-        return False
-
-
-def extractEmail(emails,site,tags,user,botid,mailchimplist,mailchimpkey):
-    '''
-    Extract the email from the pages
-    '''
-    skipEnds=['jpg','png','gif']
+def extractEmail(emails,uid,sid,url,word,private_email):
+    #Extract the email from the pages
     for email in emails:
 
+        #Test it we want the email ore not 
         process_email=True
-        for skip in skipEnds:
+        for skip in data['skipEnds']:
             if email.endswith(skip):
                 process_email=False
+
+        if private_email == True:
+            for pattern in data['maildomian']:
+                if re.search(pattern, email):
+                    print('found a match!')
+                    print('Private domain {0}'.format(email))
+                    process_email=False
+
+        #So lets process the email
         if process_email:
-
-
-            hash_email_d = hashlib.md5(str(botid+"-"+email).encode('utf-8'))
-            hash_email =hash_email_d.hexdigest()
-            from_cache = r.get(hash_email)
-            print(from_cache)
-            if from_cache == None:
-                #We dont haveything in the cache :-( 
-                writeEmailToFile(email,site,tags,user,botid,mailchimpkey,mailchimplist)
-                r.set(hash_email,email)
+            addEmailToFirebase(email,uid,sid,url,word)
 
 
 
 
-
-def getEmails(site,tags,user,botid,mailchimplist,mailchimpkey):
+def getEmails(site,sid,uid,word,private_email):
     #
     # Scrape the site and get all emails
     #
@@ -96,9 +52,7 @@ def getEmails(site,tags,user,botid,mailchimplist,mailchimpkey):
     # a set of urls that we have already crawled
     processed_urls = set()
 
-    #Test if mailchimp api is good to go
-    testMailchimpApi(mailchimplist,mailchimpkey)
-    
+
     # a set of crawled emails
     emails = set()
     scanned_page_count=0
@@ -111,50 +65,52 @@ def getEmails(site,tags,user,botid,mailchimplist,mailchimpkey):
             print("break to man pages scanned")
             break
 
-        if haveSearched(url,user,tags,botid):
+        processed_urls.add(url)
+        #Adding url to firebase
+        addUrlsFirebase(uid,url,word,sid)
 
-            processed_urls.add(url)
-        
-            # extract base url to resolve relative links
-            parts = urlsplit(url)
-            base_url = "{0.scheme}://{0.netloc}".format(parts)
-            path = url[:url.rfind('/')+1] if '/' in parts.path else url
-        
-            # get url's content
-            print("Processing {}".format(url.encode('utf-8')))
-            try:
-                response = requests.get(url)
-            except:
-                # ignore pages with errors
-                continue
-        
-            # extract all email addresses and add them into the resulting set
-            new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
-            #emails.update(new_emails)
-            extractEmail(new_emails,url,tags,user,botid,mailchimpkey,mailchimplist)
-        
-            # create a beutiful soup for the html document
-            soup = BeautifulSoup(response.text)
-        
-            # find and process all the anchors in the document
-            for anchor in soup.find_all("a"):
-                # extract link url from the anchor
-                link = anchor.attrs["href"] if "href" in anchor.attrs else ''
-                if "#" in link or "@" in link:
-                    pass
-                else:
+
     
+        # extract base url to resolve relative links
+        parts = urlsplit(url)
+        base_url = "{0.scheme}://{0.netloc}".format(parts)
+        path = url[:url.rfind('/')+1] if '/' in parts.path else url
     
+        # get url's content
+        print("Processing {}".format(url.encode('utf-8')))
+        try:
+            response = requests.get(url)
+        except:
+            # ignore pages with errors
+            continue
     
-                    # resolve relative links
-                    if link.startswith('/'):
-                        link = base_url +"/"+ link
-                    elif not link.startswith('https'):
-                        link = path +"/"+ link
-                    elif not link.startswith('http'):
-                        link = path +"/"+ link
-                    # add the new url to the queue if it was not enqueued nor processed yet
-                    if not link in new_urls and not link in processed_urls:
-                        new_urls.append(link)
+        # extract all email addresses and add them into the resulting set
+        new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
+        #emails.update(new_emails)
+        extractEmail(new_emails,uid,sid,url,word,private_email)
+    
+        # create a beutiful soup for the html document
+        soup = BeautifulSoup(response.text)
+    
+        # find and process all the anchors in the document
+        for anchor in soup.find_all("a"):
+            # extract link url from the anchor
+            link = anchor.attrs["href"] if "href" in anchor.attrs else ''
+            if "#" in link or "@" in link:
+                pass
+            else:
+
+
+
+                # resolve relative links
+                if link.startswith('/'):
+                    link = base_url +"/"+ link
+                elif not link.startswith('https'):
+                    link = path +"/"+ link
+                elif not link.startswith('http'):
+                    link = path +"/"+ link
+                # add the new url to the queue if it was not enqueued nor processed yet
+                if not link in new_urls and not link in processed_urls:
+                    new_urls.append(link)
     
 

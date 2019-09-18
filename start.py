@@ -7,41 +7,41 @@
 #!/usr/bin/env python
 import pika
 import time
-from gsearch import searchGoogle
+from getemail import getEmails
+from sendToFirebase import doneScanFirebase
 import time
 import json
+from flask import Flask, request, render_template, url_for, redirect
+app = Flask(__name__)
+
+@app.route("/scrape/",methods = ['GET', 'POST'])
+def spider():
+	if request.method == 'POST':
+		#Get payload as text
+		payload = request.get_data(as_text=True)
+		#Convert paylaod to json
+		json_payload = json.loads(payload)
+
+		if json_payload['action']=="scrapeEmail":
+			#Starting the weeb scarper for email
+		
+			getEmails([json_payload['url']],json_payload['id'],json_payload['uid'],json_payload['word'],True)
+		elif json_payload['action']=="close":
+			#Closing the scanner in firebase
+			print("Closying the scanner")
+			doneScanFirebase(json_payload['uid'],json_payload['id'])
+		else:
+			print("Wrong action")
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq',heartbeat=600,
-                                       blocked_connection_timeout=300))
-channel = connection.channel()
-
-channel.queue_declare(queue='task_queue', durable=True)
+		return "Spider Done !"
+	else:
+		return "Spinder dont want GET"
 
 
+@app.route("/")
+def home():
+	#searchGoogle(mess['words'],mess['botid'],mess['user'],mess['email'],mess['MailChimpList'],mess['userMailChimpKey'])
+	#searchGoogle(searchword,botid,userid)
+	return "Move in nofing to see here !!"
 
-def DotheSearch(message):
-	'''
-	Get data from rabbit and start
-	'''
-	mess = json.loads(message)
-
-	#Get all google search
-	if mess['type'] =='google' and mess['words'] != '':		
-		print('Start Google seacrh')
-		searchGoogle(mess['words'],mess['botid'],mess['user'],mess['email'],mess['MailChimpList'],mess['userMailChimpKey'])
-
-print(' [*] Waiting for messages. To exit press CTRL+C')
-
-def callback(ch, method, properties, body):
-    #print(" [x] Received %r" % body)
-    DotheSearch(body)
-    time.sleep(body.count(b'.'))
-    print(" [x] Done")
-    ch.basic_ack(delivery_tag = method.delivery_tag)
-
-
-channel.basic_qos(prefetch_count=1)
-channel.basic_consume('task_queue', callback)
-
-channel.start_consuming()

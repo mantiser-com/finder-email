@@ -8,3 +8,5 @@ mailchimp3
 requests
 firebase_admin
 pika
+flask
+google-api-python-client
