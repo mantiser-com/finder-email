@@ -32,8 +32,8 @@ pipelines:
           - docker load --input ./tmp-image.docker             
           # Authenticating with the service account key file
           - echo $GCLOUD_PROJECT
-          - echo $GCLOUD_API_KEYFILE2
-          - echo $GCLOUD_API_KEYFILE2 | base64 -d > ./gcloud-api-key.json
+          - cat $GCLOUD_API_KEYFILE2
+          - cat $GCLOUD_API_KEYFILE2 | base64 -d > ./gcloud-api-key.json
           - gcloud auth activate-service-account --key-file gcloud-api-key.json
           - gcloud config set project $GCLOUD_PROJECT
           # push the new Docker image to the Docker registry
