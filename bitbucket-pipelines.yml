@@ -22,8 +22,9 @@ pipelines:
           - tmp-image.docker
     - step:
         name: Push to GCP registry
-        image: google/cloud-sdk:alpine
+        image: google/cloud-sdk:latest
         script:
+          - export IMAGE_NAME=gcr.io/$GCLOUD_PROJECT/worker:$BITBUCKET_COMMIT
           - docker load --input ./tmp-image.docker             
           # Authenticating with the service account key file
           - echo $GCLOUD_API_KEYFILE | base64 -d > ./gcloud-api-key.json
@@ -33,5 +34,5 @@ pipelines:
           - docker push $IMAGE_NAME
           # Login to google docker hub
           - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://gcr.io
-          - docker push ${IMAGE_NAME}
+          - docker push $IMAGE_NAME
 
