@@ -37,8 +37,7 @@ pipelines:
           - gcloud auth activate-service-account --key-file gcloud-api-key.json
           - gcloud config set project $GCLOUD_PROJECT
           # push the new Docker image to the Docker registry
-          - docker push $IMAGE_NAME
           # Login to google docker hub
-          - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://gcr.io
+          - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://eu.gcr.io
           - docker push $IMAGE_NAME
 
