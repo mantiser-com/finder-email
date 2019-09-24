@@ -7,8 +7,8 @@
 #!/usr/bin/env python
 import pika
 import time
-from getemail import getEmails
 from sendToFirebase import doneScanFirebase
+from getemail import getEmails
 import time
 import json
 from flask import Flask, request, render_template, url_for, redirect

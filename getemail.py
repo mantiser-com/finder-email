@@ -6,14 +6,26 @@ import requests.exceptions
 from urllib.parse import urlsplit
 from collections import deque
 import json
+from firebase_admin import db
+
 from sendToFirebase import addEmailToFirebase, addUrlsFirebase
 
-
+emailsHave=[]
 
 #Open and load the exclude info
 with open('exclude.json') as json_file:
     data = json.load(json_file)
 
+
+#Getting the clients all emails to stop so we dont get dupplicates
+
+
+def getAddedEmails(user,word):
+    ref = db.reference('/todos/'+user+'/emails/')
+    snapshot = ref.get()
+    for key, val in snapshot.items():
+        if word == val["words"]:
+         emailsHave.append(val["email"])
 
 def extractEmail(emails,uid,sid,url,word,private_email):
     #Extract the email from the pages
@@ -24,6 +36,11 @@ def extractEmail(emails,uid,sid,url,word,private_email):
         for skip in data['skipEnds']:
             if email.endswith(skip):
                 process_email=False
+        if email in emailsHave:
+            print('Already have the email')
+            process_email=False
+
+
 
         if private_email == True:
             for pattern in data['maildomian']:
@@ -34,7 +51,10 @@ def extractEmail(emails,uid,sid,url,word,private_email):
 
         #So lets process the email
         if process_email:
+            #Adding email to firebase
             addEmailToFirebase(email,uid,sid,url,word)
+            #Adding email ti array so we dont add it again
+            emailsHave.append(email)
 
 
 
@@ -44,7 +64,7 @@ def getEmails(site,sid,uid,word,private_email):
     # Scrape the site and get all emails
     #
     # process urls one by one until we exhaust the queue
-
+    getAddedEmails(uid,word)
 
     # a queue of urls to be crawled
     new_urls = deque(site)
