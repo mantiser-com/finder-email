@@ -5,43 +5,36 @@
 #
 # Lissen for events from the que
 #!/usr/bin/env python
-import pika
-import time
-from sendToFirebase import doneScanFirebase
-from getemail import getEmails
-import time
+import asyncio
+import os
+from nats.aio.client import Client as NATS
+from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
+import requests
 import json
-from flask import Flask, request, render_template, url_for, redirect
-app = Flask(__name__)
-
-@app.route("/scrape/",methods = ['GET', 'POST'])
-def spider():
-	if request.method == 'POST':
-		#Get payload as text
-		payload = request.get_data(as_text=True)
-		#Convert paylaod to json
-		json_payload = json.loads(payload)
-
-		if json_payload['action']=="scrapeEmail":
-			#Starting the weeb scarper for email
-		
-			getEmails([json_payload['url']],json_payload['id'],json_payload['uid'],json_payload['word'],True)
-		elif json_payload['action']=="close":
-			#Closing the scanner in firebase
-			print("Closying the scanner")
-			doneScanFirebase(json_payload['uid'],json_payload['id'])
-		else:
-			print("Wrong action")
+from getemail import getEmails
+'''
+To test that the search adds data to nats we can use this python file
+'''
+async def run(loop):
+	nc = NATS()
+	await nc.connect("{}:4222".format(os.getenv('NATS')), loop=loop)
+	async def message_handler(msg):
+		subject = msg.subject
+		reply = msg.reply
+		data = msg.data.decode()
+		data_json = json.loads(data)
+		print(data_json['url'])
+		scan = []
+		scan.append(data_json['url'])
+		getEmails(scan)
+	# Simple publisher and async subscriber via coroutine.
+	sid = await nc.subscribe("result", cb=message_handler)
 
 
-		return "Spider Done !"
-	else:
-		return "Spinder dont want GET"
 
 
-@app.route("/")
-def home():
-	#searchGoogle(mess['words'],mess['botid'],mess['user'],mess['email'],mess['MailChimpList'],mess['userMailChimpKey'])
-	#searchGoogle(searchword,botid,userid)
-	return "Move in nofing to see here !!"
 
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run(loop))
+    loop.run_forever()

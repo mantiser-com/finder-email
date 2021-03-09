@@ -1,9 +1,16 @@
 version: '2'
 services:
-  finder:
+  finder-email:
     build: .
     volumes:
       - ./:/code
+    environment:
+      SEARCH: "mantier"
+      NATS: nats
+      USER_ID: "ahsdjkhasjkdhajksdhajkshdk"
+      RESULT_NATS: nats
     command: tail -f /etc/fstab
-    ports:
-      - 8080:8080
+    depends_on: 
+      - nats
+  nats:
+    image: nats

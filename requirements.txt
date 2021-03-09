@@ -10,3 +10,5 @@ firebase_admin
 pika
 flask
 google-api-python-client
+asyncio-nats-client
+asyncio-nats-streaming

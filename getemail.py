@@ -1,5 +1,6 @@
 import re
 import hashlib
+import os
 import requests
 from bs4 import BeautifulSoup
 import requests.exceptions
@@ -8,7 +9,6 @@ from collections import deque
 import json
 from firebase_admin import db
 
-from sendToFirebase import addEmailToFirebase, addUrlsFirebase
 
 emailsHave=[]
 
@@ -17,17 +17,9 @@ with open('exclude.json') as json_file:
     data = json.load(json_file)
 
 
-#Getting the clients all emails to stop so we dont get dupplicates
 
 
-def getAddedEmails(user,word):
-    ref = db.reference('/todos/'+user+'/emails/')
-    snapshot = ref.get()
-    for key, val in snapshot.items():
-        if word == val["words"]:
-         emailsHave.append(val["email"])
-
-def extractEmail(emails,uid,sid,url,word,private_email):
+def extractEmail(emails):
     #Extract the email from the pages
     for email in emails:
 
@@ -42,7 +34,7 @@ def extractEmail(emails,uid,sid,url,word,private_email):
 
 
 
-        if private_email == True:
+        if os.getenv('PRIVATE_EMAILS') == True:
             for pattern in data['maildomian']:
                 if re.search(pattern, email):
                     print('found a match!')
@@ -52,19 +44,19 @@ def extractEmail(emails,uid,sid,url,word,private_email):
         #So lets process the email
         if process_email:
             #Adding email to firebase
-            addEmailToFirebase(email,uid,sid,url,word)
+            print(email)
             #Adding email ti array so we dont add it again
             emailsHave.append(email)
 
 
 
 
-def getEmails(site,sid,uid,word,private_email):
+def getEmails(site):
     #
     # Scrape the site and get all emails
     #
     # process urls one by one until we exhaust the queue
-    getAddedEmails(uid,word)
+    # getAddedEmails(uid,word)
 
     # a queue of urls to be crawled
     new_urls = deque(site)
@@ -87,7 +79,7 @@ def getEmails(site,sid,uid,word,private_email):
 
         processed_urls.add(url)
         #Adding url to firebase
-        addUrlsFirebase(uid,url,word,sid)
+        #addUrlsFirebase(uid,url,word,sid)
 
 
     
@@ -107,7 +99,7 @@ def getEmails(site,sid,uid,word,private_email):
         # extract all email addresses and add them into the resulting set
         new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
         #emails.update(new_emails)
-        extractEmail(new_emails,uid,sid,url,word,private_email)
+        extractEmail(new_emails)
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text)
