@@ -22,13 +22,14 @@ async def run(loop):
 		subject = msg.subject
 		reply = msg.reply
 		data = msg.data.decode()
-		data_json = json.loads(data)
+		data_json = json.loads(json.dumps(eval(data)))
 		print(data_json['url'])
 		scan = []
 		scan.append(data_json['url'])
 		getEmails(scan)
 	# Simple publisher and async subscriber via coroutine.
 	sid = await nc.subscribe("result", cb=message_handler)
+	print("Up and lissen for nats")
 
 
 

@@ -23,9 +23,12 @@ def addNatsRun(to,text):
     return {
            "deliverd":"ok" 
     }
-json_to_send = {'action': 'searchGoogle', 
-                'url': 'https://www.elino.se',
-                'user_id': 'ahsdjkhasjkdhajksdhajkshdk'}
-addNatsRun("result",json.dumps(json_to_send))
+json_to_send = {'action': 'searchGoogle', 'url': 'https://music.apple.com/tr/artist/j-fran%C3%A7ois-mantier/1441008803', 'user_id': 'ahsdjkhasjkdhajksdhajkshdk'}
+
+
+
+
+
+addNatsRun("result",json_to_send)
 
 
