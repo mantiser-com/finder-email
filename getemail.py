@@ -8,6 +8,7 @@ from urllib.parse import urlsplit
 from collections import deque
 import json
 from firebase_admin import db
+from addNats import addNatsRun
 
 
 emailsHave=[]
@@ -19,7 +20,7 @@ with open('exclude.json') as json_file:
 
 
 
-def extractEmail(emails):
+def extractEmail(emails,url):
     #Extract the email from the pages
     for email in emails:
 
@@ -45,6 +46,7 @@ def extractEmail(emails):
         if process_email:
             #Adding email to firebase
             print(email)
+            addNatsRun(email,url)
             #Adding email ti array so we dont add it again
             emailsHave.append(email)
 
@@ -99,7 +101,7 @@ def getEmails(site):
         # extract all email addresses and add them into the resulting set
         new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
         #emails.update(new_emails)
-        extractEmail(new_emails)
+        extractEmail(new_emails,url)
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text)

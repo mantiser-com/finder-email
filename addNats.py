@@ -4,10 +4,10 @@ import json
 from nats.aio.client import Client as NATS
 from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
 
-async def addNats(loop,to,text):
+async def addNats(loop_out,to,text):
     nc = NATS()
 
-    await nc.connect("{}:4222".format(os.getenv('NATS')), loop=loop)
+    await nc.connect("{}:4222".format(os.getenv('NATS')), loop=loop_out)
 
     # Stop receiving after 2 messages.
     await nc.publish(to, str(text).encode('utf8'))
@@ -17,18 +17,9 @@ async def addNats(loop,to,text):
 
 
 def addNatsRun(to,text):
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(addNats(loop,to,text))
-    loop.close()
+    loop_out = asyncio.get_event_loop()
+    loop_out.create_task(addNats(loop_out,to,text))
     return {
            "deliverd":"ok" 
     }
-json_to_send = {'action': 'searchGoogle', 'url': 'https://elino.se', 'user_id': 'ahsdjkhasjkdhajksdhajkshdk'}
-
-
-
-
-
-addNatsRun("result",json_to_send)
-
 
