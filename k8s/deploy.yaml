@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mantiser-finder-email
+spec:
+  selector:
+    matchLabels:
+      app: mantiser-finder-email
+  template:
+    metadata:
+      labels:
+        app: mantiser-finder-email
+    spec:
+      containers:
+        - image: mantiser/finder-email
+          name: mantiser-finder-email
+          imagePullPolicy: Never
+          env:
+            - name: NATS
+              value: nats
+            - name: SEARCH
+              value: "Mantiser"
+
+          #command: ['python','-u','/code/service_watch.py']        

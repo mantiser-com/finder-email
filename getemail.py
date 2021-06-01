@@ -20,7 +20,7 @@ with open('exclude.json') as json_file:
 
 
 
-def extractEmail(emails,url):
+def extractEmail(emails,url,jsonData):
     #Extract the email from the pages
     for email in emails:
 
@@ -46,14 +46,14 @@ def extractEmail(emails,url):
         if process_email:
             #Adding email to firebase
             print(email)
-            addNatsRun(email,url)
+            addNatsRun(email,url,jsonData)
             #Adding email ti array so we dont add it again
             emailsHave.append(email)
 
 
 
 
-def getEmails(site):
+def getEmails(site,jsonData):
     #
     # Scrape the site and get all emails
     #
@@ -101,7 +101,7 @@ def getEmails(site):
         # extract all email addresses and add them into the resulting set
         new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
         #emails.update(new_emails)
-        extractEmail(new_emails,url)
+        extractEmail(new_emails,url,jsonData)
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text)
