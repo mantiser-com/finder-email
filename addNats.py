@@ -28,22 +28,41 @@ def addNatsRunFind(to,json_upload):
 
 
 
-
-
-def addNatsRun(email,url,jsonData):
+def addNatsPage(jsonData):
     to = "upload"
-    findData= {
-            "email": email,
-            "url": url,
-            "timestamp": datetime.datetime.now().isoformat()
-        }
-    
-    jsonData["results"]= findData
+    jsonData["timestampNats"]= datetime.datetime.now().isoformat()
     print("###########- adding to nats")
     #addNats(to,json_upload)
     nest_asyncio.apply()
     loop = asyncio.new_event_loop()
     loop.run_until_complete(addNats(loop,to,jsonData))
+    loop.close()
+    return {
+           "deliverd:upload":"ok" 
+    }
+
+
+
+
+
+def addNatsRun(email,url,jsonData):
+    to = "upload"
+    emailData= {
+            "email": email,
+            "url": url,
+            "type": "_email",
+            "userid": jsonData['data']['userid'],
+            "postid": jsonData['data']['postid'],
+            "scannerid": jsonData['data']['scannerid'],
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+    
+
+    print("###########- adding to nats")
+    #addNats(to,json_upload)
+    nest_asyncio.apply()
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(addNats(loop,to,emailData))
     loop.close()
     return {
            "deliverd:upload":"ok" 

@@ -20,5 +20,7 @@ spec:
               value: nats
             - name: SEARCH
               value: "Mantiser"
+            - name: REDIS
+              value: "redis-redis-cluster-headless"
 
           #command: ['python','-u','/code/service_watch.py']        

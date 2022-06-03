@@ -1,7 +1,8 @@
 version: '2'
 services:
-  finder-email:
+  finder:
     build: .
+    image: mantiser/finder
     volumes:
       - ./:/code
     environment:
@@ -12,5 +13,17 @@ services:
     command: tail -f /etc/fstab
     depends_on: 
       - nats
+    links:
+      - "nats"
+      - "splash"
+      - "meilisearch"
   nats:
     image: nats
+  splash:
+    image: scrapinghub/splash
+    ports:
+      - 8050:8050
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - 7700:7700

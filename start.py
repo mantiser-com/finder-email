@@ -12,6 +12,7 @@ from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
 import requests
 import json
 from getemail import getEmails
+from singelPage import getPages
 '''
 To test that the search adds data to nats we can use this python file
 '''
@@ -27,6 +28,10 @@ async def run(loop):
 		print(data_json['data']['url'])
 		scan = []
 		scan.append(data_json['data']['url'])
+
+		# Scan Page
+		getPages(scan,data_json)
+		# Find Email
 		getEmails(scan,data_json)
 	# Simple publisher and async subscriber via coroutine.
 	sid = await nc.subscribe("result", cb=message_handler)
