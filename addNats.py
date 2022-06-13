@@ -9,7 +9,7 @@ from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
 
 async def addNats(loop,to,text):
     nc = NATS()
-    await nc.connect("{}:4222".format(os.getenv('NATS')), loop=loop)
+    await nc.connect("{}:4222".format(os.getenv('NATS')))
 
     # Stop receiving after 2 messages.
     await nc.publish(to, str(text).encode('utf8'))
@@ -51,6 +51,7 @@ def addNatsRun(email,url,jsonData):
             "email": email,
             "url": url,
             "type": "_email",
+             "projectID": "email",
             "userid": jsonData['data']['userid'],
             "postid": jsonData['data']['postid'],
             "scannerid": jsonData['data']['scannerid'],

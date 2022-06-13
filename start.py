@@ -18,7 +18,7 @@ To test that the search adds data to nats we can use this python file
 '''
 async def run(loop):
 	nc = NATS()
-	await nc.connect("{}:4222".format(os.getenv('NATS')), loop=loop)
+	await nc.connect("{}:4222".format(os.getenv('NATS')))
 	async def message_handler(msg):
 		subject = msg.subject
 		reply = msg.reply

@@ -120,7 +120,8 @@ def scanPage(url,jsonData):
             "titel" : title,
             "timestamp": "2022-01-13",
             "meta":{},
-            "req": jsonData
+            "req": jsonData,
+            "projectID": "page"
         }
         h1=[]
         h2=[]

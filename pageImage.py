@@ -15,7 +15,7 @@ def pageImage(url,id):
     urlData = urlparse(url)
     baseURL = encoded = base64.b64encode(url.encode('ascii'))
     filename=baseURL.decode('ascii')+"-"+id
-    path="files/"
+    path="/files/"
 
     r = requests.get('http://splash:8050/render.png', params = {'url': url, 'wait' : 2}, stream=True)
     #print(r.text)
@@ -23,5 +23,6 @@ def pageImage(url,id):
     f = open(path+filename+".png", "wb")
     f.write(imgdata)
     f.close()
+    print("Images saved"+filename)
     return filename        
 
