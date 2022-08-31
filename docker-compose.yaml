@@ -10,6 +10,7 @@ services:
       NATS: nats
       USER_ID: "ahsdjkhasjkdhajksdhajkshdk"
       RESULT_NATS: nats
+      REDIS: redis
     command: tail -f /etc/fstab
     depends_on: 
       - nats
@@ -17,6 +18,7 @@ services:
       - "nats"
       - "splash"
       - "meilisearch"
+      - "redis"
   nats:
     image: nats
   splash:
@@ -27,3 +29,5 @@ services:
     image: getmeili/meilisearch:latest
     ports:
       - 7700:7700
+  redis:
+    image: redis

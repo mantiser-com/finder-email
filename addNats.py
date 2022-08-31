@@ -47,14 +47,30 @@ def addNatsPage(jsonData):
 
 def addNatsRun(email,url,jsonData):
     to = "upload"
+    try:
+        projectid = jsonData["data"]["projectid"]
+    except:
+        projectid="email"
+    try:
+        scannerid = jsonData["data"]["scannerid"]
+    except:
+        scannerid="0000"
+    try:
+        userid = jsonData["data"]["userid"]
+    except:
+        userid="0"
+    try:
+        postid = jsonData["data"]["postid"]
+    except:
+        postid="0"
     emailData= {
             "email": email,
             "url": url,
             "type": "_email",
-             "projectID": "email",
-            "userid": jsonData['data']['userid'],
-            "postid": jsonData['data']['postid'],
-            "scannerid": jsonData['data']['scannerid'],
+             "projectID": projectid,
+            "userid": userid,
+            "postid": postid,
+            "scannerid": scannerid,
             "timestamp": datetime.datetime.now().isoformat()
         }
     

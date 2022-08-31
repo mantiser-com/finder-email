@@ -11,7 +11,6 @@ from nats.aio.client import Client as NATS
 from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
 import requests
 import json
-from getemail import getEmails
 from singelPage import getPages
 '''
 To test that the search adds data to nats we can use this python file
@@ -31,8 +30,6 @@ async def run(loop):
 
 		# Scan Page
 		getPages(scan,data_json)
-		# Find Email
-		getEmails(scan,data_json)
 	# Simple publisher and async subscriber via coroutine.
 	sid = await nc.subscribe("result", cb=message_handler)
 	print("Up and lissen for nats")

@@ -20,9 +20,12 @@ def pageImage(url,id):
     r = requests.get('http://splash:8050/render.png', params = {'url': url, 'wait' : 2}, stream=True)
     #print(r.text)
     imgdata = r.raw.read()
-    f = open(path+filename+".png", "wb")
-    f.write(imgdata)
-    f.close()
-    print("Images saved"+filename)
-    return filename        
+    try:
+        f = open(path+filename+".png", "wb")
+        f.write(imgdata)
+        f.close()
+        print("Images saved"+filename)
+        return filename
+    except:
+        return "No screenhot"        
 

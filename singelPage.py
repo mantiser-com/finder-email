@@ -5,9 +5,15 @@ from urllib.parse import urlparse
 import requests.exceptions
 from urllib.parse import urlsplit
 from collections import deque
+import datetime
 from addNats import addNatsPage
 from getGeoip import  geoipLookup
 from pageImage import pageImage
+from getemail import getEmails
+
+
+## Special scanners
+from scanners.tasteline import getDataTasteline
 
 
 
@@ -34,7 +40,7 @@ def getPages(site,jsonData):
         # move next url from the queue to the set of processed urls
         url = new_urls.popleft()
         scanned_page_count+=1
-        if scanned_page_count > 30:
+        if scanned_page_count > 40:
             print("break to man pages scanned")
             break
 
@@ -105,14 +111,33 @@ def scanPage(url,jsonData):
             destination =jsonData["data"]["destination"]
         except:
             pass
-
+        try:
+            userid = jsonData["data"]["userid"]
+        except:
+            userid="0"
+        try:
+            postid = jsonData["data"]["postid"]
+        except:
+            postid="0"
+        try:
+            getemail = jsonData["data"]["getemail"]
+        except:
+            getemail="0"
+        try:
+            projectid = jsonData["data"]["projectid"]
+        except:
+            projectid="page"
+        try:
+            timestamp = jsonData["timestamp"]
+        except:
+            timestamp=datetime.datetime.now().isoformat()
 
         page ={
             "url":url,
-            "userid": jsonData["data"]["userid"],
-            "postid": jsonData["data"]["postid"],
+            "userid": userid,
+            "postid": postid,
             "type": destination,
-            "scantime": jsonData["timestamp"],
+            "scantime": timestamp,
             "path": urlData.path,
             "hostname": urlData.netloc,
             "params": urlData.params,
@@ -121,7 +146,7 @@ def scanPage(url,jsonData):
             "timestamp": "2022-01-13",
             "meta":{},
             "req": jsonData,
-            "projectID": "page"
+            "projectID": projectid
         }
         h1=[]
         h2=[]
@@ -177,11 +202,28 @@ def scanPage(url,jsonData):
 
 
         #Adding screenshot data
-        imageUrl = pageImage(url,jsonData["data"]["postid"])
+        imageUrl = pageImage(url,postid)
         page['image']= imageUrl
         #
         # Print the page result
         #
+
+        ######################
+        # Extraxk email
+        #
+        if getemail is not 0:
+            getEmails(soup,url,jsonData)
+
+
+
+        ####################
+        #
+        # Adding special page extraxters
+        if (page['hostname']=="www.tasteline.com"):
+            #Tasteline special parser
+            page['recept']=getDataTasteline(soup)
+
+
         print(page)
         addNatsPage(page)
 
