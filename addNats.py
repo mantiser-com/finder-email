@@ -63,6 +63,11 @@ def addNatsRun(email,url,jsonData):
         postid = jsonData["data"]["postid"]
     except:
         postid="0"
+    try:
+        dest = jsonData["data"]["dest"]
+    except:
+        dest=[]
+
     emailData= {
             "email": email,
             "url": url,
@@ -70,13 +75,27 @@ def addNatsRun(email,url,jsonData):
              "projectID": projectid,
             "userid": userid,
             "postid": postid,
+            "dest": dest,
             "scannerid": scannerid,
             "timestamp": datetime.datetime.now().isoformat()
         }
     
+    try:
+        emailData['country'] = jsonData["data"]["geo"]["country"]
+    except:
+        pass
+    try:
+        emailData['tech'] = jsonData["data"]["tech"]
+    except:
+        pass
+    try:
+        emailData['date'] = jsonData["data"]["timestamp"]
+    except:
+        pass
 
     print("###########- adding to nats")
     #addNats(to,json_upload)
+    print(emailData)
     nest_asyncio.apply()
     loop = asyncio.new_event_loop()
     loop.run_until_complete(addNats(loop,to,emailData))

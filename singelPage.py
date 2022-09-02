@@ -14,6 +14,7 @@ from getemail import getEmails
 
 ## Special scanners
 from scanners.tasteline import getDataTasteline
+from scanners.checkTech import testPageTech
 
 
 
@@ -112,6 +113,10 @@ def scanPage(url,jsonData):
         except:
             pass
         try:
+            dest = jsonData["data"]["dest"]
+        except:
+            dest=[]
+        try:
             userid = jsonData["data"]["userid"]
         except:
             userid="0"
@@ -139,6 +144,7 @@ def scanPage(url,jsonData):
             "type": destination,
             "scantime": timestamp,
             "path": urlData.path,
+            "dest": dest,
             "hostname": urlData.netloc,
             "params": urlData.params,
             "query": urlData.query,
@@ -223,6 +229,15 @@ def scanPage(url,jsonData):
             #Tasteline special parser
             page['recept']=getDataTasteline(soup)
 
+        #Check what tech we have
+        page['tech']= testPageTech(url,soup)
+
+
+        ######################
+        # Extraxk email
+        #
+        if getemail is not 0:
+            getEmails(soup,url,jsonData)
 
         print(page)
         addNatsPage(page)
