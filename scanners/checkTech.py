@@ -100,5 +100,6 @@ def testPageTech(url,soup):
     if shopify:
         wehaveTech.append('shopify')
     print(wehaveTech)
+    return wehaveTech
 
 

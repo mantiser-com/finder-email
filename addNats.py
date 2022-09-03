@@ -67,15 +67,21 @@ def addNatsRun(email,url,jsonData):
         dest = jsonData["data"]["dest"]
     except:
         dest=[]
+    try:
+        tech = jsonData["data"]["tech"]
+    except:
+        tech=[]
+
 
     emailData= {
             "email": email,
             "url": url,
             "type": "_email",
-             "projectID": projectid,
+            "projectID": projectid,
             "userid": userid,
             "postid": postid,
             "dest": dest,
+            "tech": tech,
             "scannerid": scannerid,
             "timestamp": datetime.datetime.now().isoformat()
         }
@@ -92,6 +98,16 @@ def addNatsRun(email,url,jsonData):
         emailData['date'] = jsonData["data"]["timestamp"]
     except:
         pass
+    try:
+        emailData['city'] = jsonData["data"]["gep"]["city"]
+    except:
+        pass
+    try:
+        emailData['country'] = jsonData["data"]["gep"]["country"]
+    except:
+        pass
+
+
 
     print("###########- adding to nats")
     #addNats(to,json_upload)

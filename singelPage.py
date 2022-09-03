@@ -214,14 +214,6 @@ def scanPage(url,jsonData):
         # Print the page result
         #
 
-        ######################
-        # Extraxk email
-        #
-        if getemail is not 0:
-            getEmails(soup,url,jsonData)
-
-
-
         ####################
         #
         # Adding special page extraxters
