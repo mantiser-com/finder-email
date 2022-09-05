@@ -230,7 +230,7 @@ def scanPage(url,jsonData):
         ######################
         # Extraxk email
         #
-        if getemail is not 0:
+        if getemail != 0:
             getEmails(soup,url,jsonData)
 
         print(page)
