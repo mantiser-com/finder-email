@@ -41,7 +41,7 @@ def getPages(site,jsonData):
         # move next url from the queue to the set of processed urls
         url = new_urls.popleft()
         scanned_page_count+=1
-        if scanned_page_count > 10:
+        if scanned_page_count > 40:
             print("break to man pages scanned")
             break
 
