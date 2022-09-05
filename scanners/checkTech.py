@@ -73,8 +73,12 @@ def wp_check(url):
 def testPageTech(url,soup):
     wehaveTech=[]
     #Lets start with wordpress
-    if wp_check(url):
-        wehaveTech.append("wordpress")
+    try:    
+        if wp_check(url):
+            wehaveTech.append("wordpress")
+    except:
+        pass
+    
 
     #we have a shopify ?
     print("check for shopify")
