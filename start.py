@@ -31,7 +31,7 @@ async def run(loop):
 		# Scan Page
 		getPages(scan,data_json)
 	# Simple publisher and async subscriber via coroutine.
-	sid = await nc.subscribe("result", cb=message_handler)
+	sid = await nc.subscribe("result",durable_name="scan", cb=message_handler)
 	print("Up and lissen for nats")
 
 
