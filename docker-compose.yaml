@@ -11,7 +11,7 @@ services:
       USER_ID: "ahsdjkhasjkdhajksdhajkshdk"
       RESULT_NATS: nats
       REDIS: redis
-    command: tail -f /etc/fstab
+    #command: tail -f /etc/fstab
     depends_on: 
       - nats
     links:
