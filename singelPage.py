@@ -41,7 +41,7 @@ def getPages(site,jsonData):
         # move next url from the queue to the set of processed urls
         url = new_urls.popleft()
         scanned_page_count+=1
-        if scanned_page_count > 40:
+        if scanned_page_count > 10:
             print("break to man pages scanned")
             break
 
@@ -57,7 +57,9 @@ def getPages(site,jsonData):
         # get url's content
         print("Processing {}".format(url.encode('utf-8')))
         try:
-            response = requests.get(url)
+            #response = requests.get(url,timeout=10)
+            response = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2},timeout=10)
+
         except:
             # ignore pages with errors
             continue
@@ -95,7 +97,7 @@ def getPages(site,jsonData):
 def scanPage(url,jsonData):
         # URL setup and HTML request
         urlData = urlparse(url)
-        r = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2})
+        r = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2},timeout=10)
         soup = BeautifulSoup(r.text, 'html.parser')
         #
         # Setup the basic page data
