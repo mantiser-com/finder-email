@@ -12,22 +12,8 @@ services:
       RESULT_NATS: nats
       REDIS: redis
     #command: tail -f /etc/fstab
-    depends_on: 
-      - nats
-    links:
-      - "nats"
-      - "splash"
-      - "meilisearch"
-      - "redis"
-  nats:
-    image: nats
-  splash:
-    image: scrapinghub/splash
-    ports:
-      - 8050:8050
-  meilisearch:
-    image: getmeili/meilisearch:latest
-    ports:
-      - 7700:7700
-  redis:
-    image: redis
+    networks:
+      - mantiser
+networks:
+  mantiser:
+    external: true

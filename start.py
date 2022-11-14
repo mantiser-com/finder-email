@@ -7,8 +7,8 @@
 #!/usr/bin/env python
 import asyncio
 import os
-from nats.aio.client import Client as NATS
-from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
+import nats
+from nats.errors import TimeoutError
 import requests
 import json
 from singelPage import getPages
@@ -16,8 +16,15 @@ from singelPage import getPages
 To test that the search adds data to nats we can use this python file
 '''
 async def run(loop):
-	nc = NATS()
-	await nc.connect("{}:4222".format(os.getenv('NATS')))
+	nc = await nats.connect(os.getenv('NATS'))
+	# Create JetStream context.
+	js = nc.jetstream()
+
+
+
+
+
+
 	async def message_handler(msg):
 		subject = msg.subject
 		reply = msg.reply
@@ -31,8 +38,17 @@ async def run(loop):
 		# Scan Page
 		getPages(scan,data_json)
 	# Simple publisher and async subscriber via coroutine.
-	sid = await nc.subscribe("result",queue="scans", cb=message_handler)
-	print("Up and lissen for nats")
+
+	osub = await js.subscribe("result",durable="worker")
+	data = bytearray()
+
+	while True:
+		try:
+			msg = await osub.next_msg()
+			await message_handler(msg)
+			await msg.ack()
+		except TimeoutError:
+		    print("All data in stream:", len(data))
 
 
 

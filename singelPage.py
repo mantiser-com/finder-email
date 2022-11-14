@@ -41,7 +41,7 @@ def getPages(site,jsonData):
         # move next url from the queue to the set of processed urls
         url = new_urls.popleft()
         scanned_page_count+=1
-        if scanned_page_count > 40:
+        if scanned_page_count > int(jsonData['data']['deep']):
             print("break to man pages scanned")
             break
 
@@ -68,7 +68,7 @@ def getPages(site,jsonData):
         scanPage(url,jsonData)
     
         # create a beutiful soup for the html document
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text,features="lxml")
     
         # find and process all the anchors in the document
         for anchor in soup.find_all("a"):
@@ -129,7 +129,7 @@ def scanPage(url,jsonData):
         try:
             getemail = jsonData["data"]["getemail"]
         except:
-            getemail="0"
+            getemail="false"
         try:
             projectid = jsonData["data"]["projectid"]
         except:
@@ -153,7 +153,7 @@ def scanPage(url,jsonData):
             "titel" : title,
             "timestamp": "2022-01-13",
             "meta":{},
-            "req": jsonData,
+            "req": jsonData['data'],
             "projectID": projectid
         }
         h1=[]
@@ -230,7 +230,7 @@ def scanPage(url,jsonData):
         ######################
         # Extraxk email
         #
-        if getemail != 0:
+        if getemail != "false":
             getEmails(soup,url,jsonData)
 
         print(page)
