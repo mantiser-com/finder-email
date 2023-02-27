@@ -111,6 +111,7 @@ spec:
     spec:
       containers:
         - name: people
+          command: ["python","startPeople.py"]
           image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
           imagePullPolicy: Always
           env:
@@ -150,7 +151,7 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
-          command: ["python","startPeople.py"]
+          
           resources:
             requests:
               cpu: 100m
@@ -180,6 +181,7 @@ spec:
         - name: company
           image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
           imagePullPolicy: Always
+          command: ["python","startCompany.py"]
           env:
             - name: NATS
               value: nats.nats.svc
@@ -217,7 +219,7 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
-          command: ["python","startCompany.py"]
+          
           resources:
             requests:
               cpu: 100m
