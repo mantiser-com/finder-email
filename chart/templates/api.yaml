@@ -150,7 +150,7 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
-            cmd: ["python","startPeople.py"]
+          cmd: ["python","startPeople.py"]
           resources:
             requests:
               cpu: 100m
@@ -217,7 +217,7 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
-            cmd: ["python","startCompany.py"]
+          cmd: ["python","startCompany.py"]
           resources:
             requests:
               cpu: 100m
