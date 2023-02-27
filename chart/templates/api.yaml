@@ -88,3 +88,137 @@ spec:
 
 
             
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    mantiser-com/user_id: "1112"
+  name: finder-people
+  labels:
+    app: finder-people
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finder-people
+  template:
+    metadata:
+      annotations:
+        app: finder-people
+      labels:
+        app: finder-people
+    spec:
+      containers:
+        - name: people
+          image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: NATS
+              value: nats.nats.svc
+            - name: SEARCH
+              value: "Mantiser"
+            - name: REDISHOST
+              value: redis
+            - name: REDIS
+              value: redis
+            - name: REDISPORT
+              value: "6379"
+            - name: AUTH_TOKENS
+              value: "['1234','6789']"
+            - name: ELASTICSEARCH
+              value: http://elasticsearch:9200
+            - name: ES_INDEX
+              value: mantiser
+            - name: INDB
+              value: influxdb
+            - name: INDB_PORT
+              value: "8086"
+            - name: INDB_USER
+              value: influxdb
+            - name: INDB_PASSWORD
+              value: influxdb
+            - name: INDB_DATABASE
+              value: ollebo
+            - name: INDB_TOKEN
+              value: aaaaaaaaa
+            - name: INDB_ORG
+              value: mantiser
+            - name:  MEILISEARCH
+              value: http://meilisearch:7700
+            - name: PROJECT
+              value: mantiser
+            - name: MONGOURL
+              value: urlsiiii
+            cmd: ["python","startPeople.py"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    mantiser-com/user_id: "1112"
+  name: finder-company
+  labels:
+    app: finder-company
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finder-company
+  template:
+    metadata:
+      annotations:
+        app: finder-company
+      labels:
+        app: finder-company
+    spec:
+      containers:
+        - name: company
+          image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: NATS
+              value: nats.nats.svc
+            - name: SEARCH
+              value: "Mantiser"
+            - name: REDISHOST
+              value: redis
+            - name: REDIS
+              value: redis
+            - name: REDISPORT
+              value: "6379"
+            - name: AUTH_TOKENS
+              value: "['1234','6789']"
+            - name: ELASTICSEARCH
+              value: http://elasticsearch:9200
+            - name: ES_INDEX
+              value: mantiser
+            - name: INDB
+              value: influxdb
+            - name: INDB_PORT
+              value: "8086"
+            - name: INDB_USER
+              value: influxdb
+            - name: INDB_PASSWORD
+              value: influxdb
+            - name: INDB_DATABASE
+              value: ollebo
+            - name: INDB_TOKEN
+              value: aaaaaaaaa
+            - name: INDB_ORG
+              value: mantiser
+            - name:  MEILISEARCH
+              value: http://meilisearch:7700
+            - name: PROJECT
+              value: mantiser
+            - name: MONGOURL
+              value: urlsiiii
+            cmd: ["python","startCompany.py"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi

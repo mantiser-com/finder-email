@@ -10,6 +10,7 @@ async def main():
 
     # Persist messages on 'foo's subject.
     await js.add_stream(name="upload", subjects=["upload"], )
+    await js.add_stream(name="result", subjects=["result"], )
 
     # Create ordered consumer with flow control and heartbeats
     # that auto resumes on failures.
@@ -21,3 +22,4 @@ async def main():
     
 if __name__ == '__main__':
     asyncio.run(main())
+    print("Init nats ")

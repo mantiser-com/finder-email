@@ -1,5 +1,19 @@
 version: '2'
 services:
+  init:
+    image: mantiser/finder
+    volumes:
+      - ./:/code
+    init: true
+    environment:
+      SEARCH: "mantier"
+      NATS: nats
+      USER_ID: "ahsdjkhasjkdhajksdhajkshdk"
+      RESULT_NATS: nats
+      REDIS: redis
+    command: python3 initnats.py
+    networks:
+      - mantiser
   finder:
     build: .
     image: mantiser/finder

@@ -48,7 +48,8 @@ async def run(loop):
 			await message_handler(msg)
 			await msg.ack()
 		except TimeoutError:
-		    print("All data in stream:", len(data))
+		    #print("All data in stream:", len(data))
+			pass
 
 
 
