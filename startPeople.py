@@ -34,7 +34,6 @@ def isThisaPersionFunction(url):
     elif site.netloc == "medium.com" or site.netloc == "www.medium.com":
         print("Medium")
         return getMediumData(site)
-        return 
     elif site.netloc == "twitter.com" or site.netloc == "www.twitter.com":
         print("Twitter")
         return getTwitterData(site)

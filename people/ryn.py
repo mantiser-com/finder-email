@@ -29,6 +29,6 @@ def isThisaPersionFunction(url):
 
 
 
-isThisaPersionFunction("https://github.com/mattiashem")
-isThisaPersionFunction("https://medium.com/@pravse")
-isThisaPersionFunction("https://twitter.com/ibuildthecloud")
+#isThisaPersionFunction("https://github.com/mattiashem")
+#isThisaPersionFunction("https://medium.com/@pravse")
+#isThisaPersionFunction("https://twitter.com/ibuildthecloud")

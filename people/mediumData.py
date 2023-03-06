@@ -5,7 +5,7 @@ import html5lib
 
 def getMediumData(url):
     print("Getting Medium data "+ url.netloc + url.path)
-    dataBack =[]
+    dataBack =""
     if (url.path[1] == "@"):
         print("User page")
         dataBack = {
