@@ -17,7 +17,18 @@ def pageImage(url,id):
     filename=baseURL.decode('ascii')+"-"+id
     path="/files/"
 
-    r = requests.get('http://splash:8050/render.png', params = {'url': url, 'wait' : 2}, stream=True)
+    r = ""
+    try:
+        #response = requests.get(url,timeout=10)
+        r = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2},timeout=10)
+    except:
+        # ignore pages with errors
+        print("########### Skipping splash error")
+        r = requests.get(url, timeout=10)
+
+
+
+
     #print(r.text)
     imgdata = r.raw.read()
     try:

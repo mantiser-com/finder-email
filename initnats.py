@@ -1,9 +1,10 @@
 import asyncio
 import nats
+import os
 from nats.errors import TimeoutError
 
 async def main():
-    nc = await nats.connect("nats")
+    nc = await nats.connect(os.getenv('NATS'))
 
     # Create JetStream context.
     js = nc.jetstream()

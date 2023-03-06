@@ -1,16 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 import html5lib
+from urllib.parse import urlparse
 
 
-def getGitHubData(url):
+def getGitHubData(site):
     # Get data from GitHub
     # Path: people/githubData.py
     # Returns: list of dictionaries
     # Example: [{'name': 'John Doe', 'username': 'johndoe', 'email': '
-    print("Getting GitHub data"+ url)
-    pathArray = url.path.split('/')
-    path = "https://github.com/"+pathArray[0]
+    url = urlparse(site)
+    print("Getting GitHub data"+ url.path)
+    pathArrayStrin = url.path
+    pathArray = pathArrayStrin.split("/")
+    path = "https://github.com/"+pathArray[1]
+    print(path)
     r = requests.get('http://splash:8050/render.html', params = {'url': path, 'wait' : 2},timeout=10)
     soup=BeautifulSoup(r.content,features="lxml")
     try:

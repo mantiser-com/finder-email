@@ -11,7 +11,7 @@ def isThisaPersionFunction(url):
 
     if site.netloc == "github.com" or site.netloc == "www.github.com":
         print("Github")
-        getGitHubData(url)
+        getGitHubData(site)
         return False
     if site.netloc == "medium.com" or site.netloc == "www.medium.com":
         print("Medium")

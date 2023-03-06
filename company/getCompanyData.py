@@ -69,7 +69,10 @@ def getCompanyData(url):
         stripeservers = dns.resolver.resolve("_acme-challenge.checkout."+domain,'txt')
         if stripeservers:
             domainResult['stripe']=True
-            domainResult['stripesever']=stripeservers
+            domainsStripeservers = []
+            for data in stripeservers:
+                domainsStripeservers.append(str(data))
+            domainResult['stripesever']=domainsStripeservers
     except:
         pass
     # Paypal
@@ -77,7 +80,10 @@ def getCompanyData(url):
         paypalservers = dns.resolver.resolve("_paypal-challenge."+domain,'txt')
         if paypalservers:
             domainResult['paypal']=True
-            domainResult['paypalsever']=paypalservers
+            domainspaypalservers = []
+            for data in paypalservers:
+                domainspaypalservers.append(str(data))
+            domainResult['paypalsever']=domainspaypalservers
     except: 
         pass
     # mailchimp
@@ -85,7 +91,10 @@ def getCompanyData(url):
         mailchimpservers = dns.resolver.resolve("k2._domainkey."+domain,'txt')
         if mailchimpservers:
             domainResult['mailchimp']=True
-            domainResult['mailchimpservers']=str(mailchimpservers)
+            domainsmailchimpservers = []
+            for data in mailchimpservers:
+                domainsmailchimpservers.append(str(data))
+            domainResult['mailchimpservers']=domainsmailchimpservers
     except: 
         pass
 

@@ -10,6 +10,7 @@ from addNats import addNatsPage
 from getGeoip import  geoipLookup
 from pageImage import pageImage
 from getemail import getEmails
+import base64 
 
 
 ## Special scanners
@@ -62,13 +63,15 @@ def getPages(site,jsonData):
 
         except:
             # ignore pages with errors
-            continue
-    
-        # Lets get some data from the pages we found
-        scanPage(url,jsonData)
+            print("########### Skipping splash error")
+            response = requests.get(url, timeout=10)
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text,features="lxml")
+
+        # Lets get some data from the pages we found
+        scanPage(url,jsonData,soup)
+    
     
         # find and process all the anchors in the document
         for anchor in soup.find_all("a"):
@@ -94,12 +97,9 @@ def getPages(site,jsonData):
 
 
 
-def scanPage(url,jsonData):
+def scanPage(url,jsonData,soup):
         # URL setup and HTML request
         urlData = urlparse(url)
-        r = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2},timeout=10)
-        soup = BeautifulSoup(r.text, 'html.parser')
-        #
         # Setup the basic page data
         #
         title ="none"
@@ -205,13 +205,16 @@ def scanPage(url,jsonData):
 
 
         # Adding Geo Data
+        print("Geoip lookup")
         geo = geoipLookup(url)
         page['geo']= geo
 
 
         #Adding screenshot data
-        imageUrl = pageImage(url,postid)
-        page['image']= imageUrl
+        print("Screenshot")
+        #imageUrl = pageImage(url,postid)
+        baseURL = encoded = base64.b64encode(url.encode('ascii'))
+        page['image']= baseURL.decode('ascii')+"-"+postid
         #
         # Print the page result
         #
@@ -219,17 +222,20 @@ def scanPage(url,jsonData):
         ####################
         #
         # Adding special page extraxters
+        print("Special parsers")
         if (page['hostname']=="www.tasteline.com"):
             #Tasteline special parser
             page['recept']=getDataTasteline(soup)
 
         #Check what tech we have
-        page['tech']= testPageTech(url,soup)
+        print("Check tech")
+        #page['tech']= testPageTech(url,soup)
 
 
         ######################
         # Extraxk email
         #
+        print("Emails")
         if getemail != "false":
             getEmails(soup,url,jsonData)
 

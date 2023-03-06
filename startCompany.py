@@ -54,7 +54,7 @@ async def run(loop):
 
 		
 	# Simple publisher and async subscriber via coroutine.
-	osub = await js.subscribe("result",durable="copmany")
+	osub = await js.subscribe("result",durable="company")
 	data = bytearray()
 
 	while True:
