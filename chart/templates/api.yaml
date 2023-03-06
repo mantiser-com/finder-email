@@ -108,7 +108,7 @@ spec:
             - name: MONGOURL
               value: urlsiiii
             - name: SPLASH
-              value: http://splash:8050/render.html
+              value: http://localhost:8050/render.html
           resources:
             requests:
               cpu: 100m
