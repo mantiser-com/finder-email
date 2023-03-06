@@ -57,6 +57,7 @@ def getPages(site,jsonData):
     
         # get url's content
         print("Processing {}".format(url.encode('utf-8')))
+        response = ""
         try:
             #response = requests.get(url,timeout=10)
             response = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
