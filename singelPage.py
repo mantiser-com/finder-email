@@ -59,11 +59,20 @@ def getPages(site,jsonData):
         print("Processing {}".format(url.encode('utf-8')))
         try:
             #response = requests.get(url,timeout=10)
-            response = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 2},timeout=10)
+            response = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
 
         except:
             # ignore pages with errors
             print("########### Skipping splash error")
+
+        try:
+            #response = requests.get(url,timeout=10)
+            response = requests.get(url, timeout=10)
+
+        except:
+            # ignore pages with errors
+            print("########### request error")
+
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text,features="lxml")
