@@ -64,7 +64,6 @@ def getPages(site,jsonData):
         except:
             # ignore pages with errors
             print("########### Skipping splash error")
-            response = requests.get(url, timeout=10)
     
         # create a beutiful soup for the html document
         soup = BeautifulSoup(response.text,features="lxml")
