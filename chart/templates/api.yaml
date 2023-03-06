@@ -21,7 +21,7 @@ metadata:
   labels:
     app: finder-email
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: finder-email
