@@ -37,6 +37,33 @@ spec:
           persistentVolumeClaim:
             claimName: files-disk
       containers:
+        - name: splash
+          image: scrapinghub/splash:master
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+          - containerPort: 8050
+            name: splash
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
         - name: search
           volumeMounts:
             - name: files-disk
@@ -80,6 +107,8 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
+            - name: SPLASH
+              value: http://splash:8050/render.html
           resources:
             requests:
               cpu: 100m
@@ -110,6 +139,33 @@ spec:
         app: finder-people
     spec:
       containers:
+        - name: splash
+          image: scrapinghub/splash:master
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+          - containerPort: 8050
+            name: splash
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
         - name: people
           command: ["python","startPeople.py"]
           image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
@@ -151,6 +207,8 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
+            - name: SPLASH
+              value: http://splash:8050/render.html
           
           resources:
             requests:
@@ -178,6 +236,33 @@ spec:
         app: finder-company
     spec:
       containers:
+        - name: splash
+          image: scrapinghub/splash:master
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+          - containerPort: 8050
+            name: splash
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8050
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
         - name: company
           image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
           imagePullPolicy: Always
@@ -219,6 +304,8 @@ spec:
               value: mantiser
             - name: MONGOURL
               value: urlsiiii
+            - name: SPLASH
+              value: http://splash:8050/render.html
           
           resources:
             requests:

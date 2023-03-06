@@ -11,7 +11,7 @@ from getGeoip import  geoipLookup
 from pageImage import pageImage
 from getemail import getEmails
 import base64 
-
+import os
 
 ## Special scanners
 from scanners.tasteline import getDataTasteline
@@ -60,7 +60,7 @@ def getPages(site,jsonData):
         response = ""
         try:
             #response = requests.get(url,timeout=10)
-            response = requests.get('http://splash:8050/render.html', params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
+            response = requests.get(os.getenv('SPLASH'), params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
 
         except:
             # ignore pages with errors
