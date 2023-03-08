@@ -12,5 +12,11 @@ def getMediumData(url):
             "name": url.path[1:],
             "source": "medium",
             
-            }           
+            }
+    else:
+        dataBack = {
+            "source": "medium"
+            
+            }
+
     return dataBack
