@@ -71,7 +71,7 @@ def wp_check(url):
 
 #lets test the site and se what tec we gor in there 
 def testPageTech(url,soup):
-    wehaveTech=[]
+    wehaveTech=['page']
     #Lets start with wordpress
     try:    
         if wp_check(url):

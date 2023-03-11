@@ -36,10 +36,9 @@ def geoipLookup(url):
     except:
         returnData={
             "url":result_url,
-            "city": "",
-            "country": "",
-            "ip": ipadd,
-            "_geo": {}
+            "city": "none",
+            "country": "none",
+            "ip": ipadd
         }
 
     return returnData

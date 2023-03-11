@@ -76,33 +76,35 @@ def getPages(site,jsonData):
 
     
         # create a beutiful soup for the html document
-        soup = BeautifulSoup(response.text,features="lxml")
+        try:
+            soup = BeautifulSoup(response.text,features="lxml")
 
-        # Lets get some data from the pages we found
-        scanPage(url,jsonData,soup)
-    
-    
-        # find and process all the anchors in the document
-        for anchor in soup.find_all("a"):
-            # extract link url from the anchor
-            link = anchor.attrs["href"] if "href" in anchor.attrs else ''
-            if "#" in link or "@" in link:
-                pass
-            else:
+            # Lets get some data from the pages we found
+            scanPage(url,jsonData,soup)
 
 
+            # find and process all the anchors in the document
+            for anchor in soup.find_all("a"):
+                # extract link url from the anchor
+                link = anchor.attrs["href"] if "href" in anchor.attrs else ''
+                if "#" in link or "@" in link:
+                    pass
+                else:
 
-                # resolve relative links
-                if link.startswith('/'):
-                    link = base_url +"/"+ link
-                elif not link.startswith('https'):
-                    link = path +"/"+ link
-                elif not link.startswith('http'):
-                    link = path +"/"+ link
-                # add the new url to the queue if it was not enqueued nor processed yet
-                if not link in new_urls and not link in processed_urls:
-                    new_urls.append(link)
 
+
+                    # resolve relative links
+                    if link.startswith('/'):
+                        link = base_url +"/"+ link
+                    elif not link.startswith('https'):
+                        link = path +"/"+ link
+                    elif not link.startswith('http'):
+                        link = path +"/"+ link
+                    # add the new url to the queue if it was not enqueued nor processed yet
+                    if not link in new_urls and not link in processed_urls:
+                        new_urls.append(link)
+        except:
+            print("could not get url")
 
 
 
@@ -181,11 +183,11 @@ def scanPage(url,jsonData,soup):
             try:
                 content = msg_attrs['content']
             except:
-                pass
+                content="pass"
             try:
-                property = msg_attrs['property']
+                property = str(msg_attrs['property']).replace(':','-')
             except:
-                pass
+                property="pass"
             page['meta'][property]=content
 
 
