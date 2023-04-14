@@ -1,0 +1,7 @@
+{
+    "maildomain":["gmail.com","hotmail.com","yahoo.com","yourdomain.com","email.com","myself.com","yourcompany.com","mywebsite.com","microsoft.com","github.com"],
+    "sites":["yahoo.com","youtube.com","imdb.com","wikipedia.org","google.com"],
+    "skipEnds":["png","jpg","gif","jpeg"],
+    "emails":["matte.hemmingsson@elino.se"],
+    "free": ["test","demo","sample","google","yahoo","copyright","microsoft","cnn.com","cbs.com","nbc.com","abc.com","fox.com","npr.com","nbc.com","cbs.com","cnn.com","msnbc.com","msn.com","cnet.com","cbsnews.com","cbsne.com"]
+    }

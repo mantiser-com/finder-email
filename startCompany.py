@@ -17,6 +17,7 @@ from people.githubData import getGitHubData
 from people.mediumData import getMediumData
 from people.twitterData import getTwitterData
 from addScannerData import addScannerData
+from exclude.testExclude import testExclude
 
 
 '''
@@ -42,15 +43,22 @@ async def run(loop):
             data = msg.data.decode()
             data_json = json.loads(json.dumps(eval(data)))
             print(data_json['data']['url'])
-            companyData = getCompanyData(data_json['data']['url'])
-            
+            # Look if thepage should be excluded
+            process_page=True
+            #Check if we have the email in our exclude list
+            process_page = testExclude(data_json['data']['url'],"url")
 
-            if companyData != False:                
-                dataToSave= addScannerData("_company",data_json['data']['url'],data_json)
-                dataToSave['company']=companyData
-                addNatsPage(dataToSave)
-                print(dataToSave)
-                print("Data sent to nats")
+            if process_page:	    
+
+                companyData = getCompanyData(data_json['data']['url'])
+
+
+                if companyData != False:                
+                    dataToSave= addScannerData("_company",data_json['data']['url'],data_json)
+                    dataToSave['company']=companyData
+                    addNatsPage(dataToSave)
+                    print(dataToSave)
+                    print("Data sent to nats")
 
 		
 	# Simple publisher and async subscriber via coroutine.

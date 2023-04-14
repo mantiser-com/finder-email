@@ -12,9 +12,13 @@ from nats.errors import TimeoutError
 import requests
 import json
 from singelPage import getPages
+from exclude.initExclude import initExclude
 '''
 To test that the search adds data to nats we can use this python file
 '''
+
+
+
 async def run(loop):
 	nc = await nats.connect(os.getenv('NATS'))
 	# Create JetStream context.
@@ -52,6 +56,8 @@ async def run(loop):
 			pass
 
 
+print("Init exclude")
+initExclude()
 
 
 

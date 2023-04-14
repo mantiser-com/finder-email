@@ -32,8 +32,14 @@ def addScannerData(type,url,jsonData):
         dest = jsonData["data"]["dest"]
     except:
         dest=[]
-
-
+    try:
+        tag = jsonData["data"]["tag"]
+    except:
+        tag="none"
+    try:
+        org = jsonData["data"]["org"]
+    except:
+        org="private"
 
     scannerData= {
             "url": url,
@@ -45,6 +51,8 @@ def addScannerData(type,url,jsonData):
             "dest": dest,
             "scannerid": scannerid,
             "data": jsonData['data'],
+            "tag": tag,
+            "org": org,
             "timestamp": datetime.datetime.now().isoformat()
         }
     return scannerData

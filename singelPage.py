@@ -16,6 +16,8 @@ import os
 ## Special scanners
 from scanners.tasteline import getDataTasteline
 from scanners.checkTech import testPageTech
+from exclude.testExclude import testExclude
+
 
 
 
@@ -43,7 +45,7 @@ def getPages(site,jsonData):
         url = new_urls.popleft()
         scanned_page_count+=1
         if scanned_page_count > int(jsonData['data']['deep']):
-            print("break to man pages scanned")
+            print("break to man pages scanned "+scanned_page_count)
             break
 
         processed_urls.add(url)
@@ -55,57 +57,64 @@ def getPages(site,jsonData):
         base_url = "{0.scheme}://{0.netloc}".format(parts)
         path = url[:url.rfind('/')+1] if '/' in parts.path else url
     
-        # get url's content
-        print("Processing {}".format(url.encode('utf-8')))
-        response = ""
-        try:
-            #response = requests.get(url,timeout=10)
-            response = requests.get(os.getenv('SPLASH'), params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
+        # Look if thepage should be excluded
+        process_page=True
+        #Check if we have the email in our exclude list
+        process_page = testExclude(url,"url")
 
-        except:
-            # ignore pages with errors
-            print("########### Skipping splash error")
+        if process_page:
+            # get url's content
+            print("Processing {}".format(url.encode('utf-8')))
+            response = ""
+            try:
+                #response = requests.get(url,timeout=10)
+                response = requests.get(os.getenv('SPLASH'), params = {'url': url, 'wait' : 10, 'timeout' :20},timeout=30)
 
-        try:
-            #response = requests.get(url,timeout=10)
-            response = requests.get(url, timeout=10)
+            except:
+                # ignore pages with errors
+                print("########### Skipping splash error")
 
-        except:
-            # ignore pages with errors
-            print("########### request error")
+            try:
+                #response = requests.get(url,timeout=10)
+                response = requests.get(url, timeout=10)
 
-    
-        # create a beutiful soup for the html document
-        try:
-            soup = BeautifulSoup(response.text,features="lxml")
-
-            # Lets get some data from the pages we found
-            scanPage(url,jsonData,soup)
+            except:
+                # ignore pages with errors
+                print("########### request error")
 
 
-            # find and process all the anchors in the document
-            for anchor in soup.find_all("a"):
-                # extract link url from the anchor
-                link = anchor.attrs["href"] if "href" in anchor.attrs else ''
-                if "#" in link or "@" in link:
-                    pass
-                else:
+            # create a beutiful soup for the html document
+            try:
+                soup = BeautifulSoup(response.text,features="lxml")
+
+                # Lets get some data from the pages we found
+                scanPage(url,jsonData,soup)
+
+
+                # find and process all the anchors in the document
+                for anchor in soup.find_all("a"):
+                    # extract link url from the anchor
+                    link = anchor.attrs["href"] if "href" in anchor.attrs else ''
+                    if "#" in link or "@" in link:
+                        pass
+                    else:
 
 
 
-                    # resolve relative links
-                    if link.startswith('/'):
-                        link = base_url +"/"+ link
-                    elif not link.startswith('https'):
-                        link = path +"/"+ link
-                    elif not link.startswith('http'):
-                        link = path +"/"+ link
-                    # add the new url to the queue if it was not enqueued nor processed yet
-                    if not link in new_urls and not link in processed_urls:
-                        new_urls.append(link)
-        except:
-            print("could not get url")
-
+                        # resolve relative links
+                        if link.startswith('/'):
+                            link = base_url +"/"+ link
+                        elif not link.startswith('https'):
+                            link = path +"/"+ link
+                        elif not link.startswith('http'):
+                            link = path +"/"+ link
+                        # add the new url to the queue if it was not enqueued nor processed yet
+                        if not link in new_urls and not link in processed_urls:
+                            new_urls.append(link)
+            except:
+                print("could not get url")
+        else:
+            print("Excluded url: "+url)
 
 
 def scanPage(url,jsonData,soup):
@@ -142,6 +151,14 @@ def scanPage(url,jsonData,soup):
         except:
             getemail="false"
         try:
+            tag = jsonData["data"]["tag"]
+        except:
+            tag="none"
+        try:
+            org = jsonData["data"]["org"]
+        except:
+            org="Private"
+        try:
             projectid = jsonData["data"]["projectid"]
         except:
             projectid="page"
@@ -165,7 +182,9 @@ def scanPage(url,jsonData,soup):
             "timestamp": "2022-01-13",
             "meta":{},
             "req": jsonData['data'],
-            "projectID": projectid
+            "projectID": projectid,
+            "tag": tag,
+            "org": org,
         }
         h1=[]
         h2=[]

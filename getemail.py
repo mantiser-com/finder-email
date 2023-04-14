@@ -14,13 +14,13 @@ import redis
 import hashlib
 
 
+from exclude.testExclude import testExclude
+
 emailsHave=[]
 #rc = RedisCluster(host=os.getenv('REDIS'), port=6379, decode_responses=True)
 rc = redis.Redis(host=os.getenv('REDIS'), port=6379, decode_responses=True)
 
-#Open and load the exclude info
-with open('exclude.json') as json_file:
-    data = json.load(json_file)
+
 
 def checkEmail(email,scannerid):
     '''
@@ -53,15 +53,8 @@ def extractEmail(emails,url,jsonData):
 
         #Test it we want the email ore not 
         process_email=True
-        for skip in data['skipEnds']:
-            if email.endswith(skip):
-                process_email=False
-        if os.getenv('PRIVATE_EMAILS') == True:
-            for pattern in data['maildomian']:
-                if re.search(pattern, email):
-                    print('found a match!')
-                    print('Private domain {0}'.format(email))
-                    process_email=False
+        #Check if we have the email in our exclude list
+        process_email = testExclude(email,"email")
 
         if checkEmail(email,scannerid):
             process_email=False
