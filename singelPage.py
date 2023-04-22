@@ -45,7 +45,7 @@ def getPages(site,jsonData):
         url = new_urls.popleft()
         scanned_page_count+=1
         if scanned_page_count > int(jsonData['data']['deep']):
-            print("break to man pages scanned "+scanned_page_count)
+            print("break to man pages scanned "+str(scanned_page_count))
             break
 
         processed_urls.add(url)
