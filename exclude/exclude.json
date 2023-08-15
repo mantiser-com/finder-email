@@ -1,5 +1,5 @@
 {
-    "maildomain":["gmail.com","hotmail.com","yahoo.com","yourdomain.com","email.com","myself.com","yourcompany.com","mywebsite.com","microsoft.com","github.com"],
+    "maildomain":["gmail.com","hotmail.com","yahoo.com","yourdomain.com","email.com","myself.com","yourcompany.com","mywebsite.com","microsoft.com","github.com","mail.com","www.mail.com"],
     "sites":["yahoo.com","youtube.com","imdb.com","wikipedia.org","google.com"],
     "skipEnds":["png","jpg","gif","jpeg"],
     "emails":["matte.hemmingsson@elino.se"],
