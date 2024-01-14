@@ -6,9 +6,10 @@ from urllib.parse import urlparse
 import requests.exceptions
 from urllib.parse import urlsplit
 from collections import deque
+from addNats import addNatsPage
+
 import datetime
 import time
-
 import base64 
 import os
 
@@ -37,17 +38,28 @@ for url in urls:
             carArray.append(info.text)
 
 
-
         carOb ={
+            "url": url,
+            "type": "_car",
+            "projectID": "car",
+            "userid": "mantiser",
+            "postid": "autouncle",
+            "prefix": "car",
+            "dest": "mongodb",
+            "scannerid": "core",
+            "tag": ['car','autouncle'],
+            "org": "autouncle",
+            "timestamp": datetime.datetime.now().isoformat(),
             "name": carname.text,
             "id": carID,
             "link": carLink.attrs['href'],
             "currency": carCurency.attrs['data-currency'],
             "info": carArray,
-            "price": carPrice.text
+            "price": carPrice.text,
+            "type": "_car"
         }
         #print(carOb)
-        Cars.append(carOb)
+        addNatsPage(carOb)
         time.sleep(5)
 print(Cars)    
     
