@@ -59,7 +59,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: NATS
-              value: nats.nats.svc
+              value: nats
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
@@ -159,7 +159,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: NATS
-              value: nats.nats.svc
+              value: nats
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
@@ -222,6 +222,13 @@ spec:
       labels:
         app: finder-company
     spec:
+        - image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+          name: db-init
+          imagePullPolicy: Always
+          command: ["python3",","initnats.py"]
+          env:
+            - name: NATS
+              value: nats
       containers:
         - name: splash
           image: scrapinghub/splash:master
@@ -256,7 +263,7 @@ spec:
           command: ["python","startCompany.py"]
           env:
             - name: NATS
-              value: nats.nats.svc
+              value: nats
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
