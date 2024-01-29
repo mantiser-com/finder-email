@@ -226,7 +226,7 @@ spec:
         - image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
           name: db-init
           imagePullPolicy: Always
-          command: ["python3",","initnats.py"]
+          command: ["python3","initnats.py"]
           env:
             - name: NATS
               value: nats
