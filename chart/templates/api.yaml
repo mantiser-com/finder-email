@@ -63,9 +63,9 @@ spec:
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
-              value: redis
+              value: redis-master
             - name: REDIS
-              value: redis
+              value: redis-master
             - name: REDISPORT
               value: "6379"
             - name: AUTH_TOKENS
@@ -163,9 +163,9 @@ spec:
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
-              value: redis
+              value: redis-master
             - name: REDIS
-              value: redis
+              value: redis-master
             - name: REDISPORT
               value: "6379"
             - name: AUTH_TOKENS
@@ -268,9 +268,9 @@ spec:
             - name: SEARCH
               value: "Mantiser"
             - name: REDISHOST
-              value: redis
+              value: redis-master
             - name: REDIS
-              value: redis
+              value: redis-master
             - name: REDISPORT
               value: "6379"
             - name: AUTH_TOKENS
