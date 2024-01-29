@@ -222,6 +222,7 @@ spec:
       labels:
         app: finder-company
     spec:
+      initContainers:
         - image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
           name: db-init
           imagePullPolicy: Always
